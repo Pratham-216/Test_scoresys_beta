@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Scorecard Team Enteries</title> 
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="Test.js"></script>
+    </head>
+    <body style="font-size: xx-large;padding: 20PX;" ng-app="scoreboard" ng-controller="regiCtrl">
+        <div style="float: right;">
+            <label for="numPlayers">Number of Players in team:</label>
+            <input type="number" name="numPlayers" id="numPlayers" ng-model="numPlayers" min="2" max="11" placeholder="11"><br>
+            <label for="max_days">Maximum Days :</label>
+            <input type="number" name="max_days" id="max_days" ng-model="max_days" min="1" max="5" placeholder="3"><br>
+            <label for="overs_per_day">Number of Overs per Day:</label>
+            <input type="number" name="overs_per_day" id="overs_per_day" ng-model="overs_per_day" min="1" max="100" placeholder="15">
+        </div>
+        <form name="registration" novalidate>
+            <label for="team_a">Team A: </label>
+            <input type="text" id="team_a" ng-model="team_a" name="team_a" required>
+            <span style="color: red;" ng-show="registration.team_a.$dirty && registration.team_a.$invalid">
+                <span ng-show="registration.team_a.$error.required">Team A name is required</span>
+            </span>
+            <br><br>
+            <label for="team_b">Team B: </label>
+            <input type="text" id="team_b" ng-model="team_b" name="team_b" required>
+            <span style="color: red;" ng-show="registration.team_b.$dirty && registration.team_b.$invalid">
+                <span ng-show="registration.team_b.$error.required">Team B name is required</span>
+            </span>
+            <br><br>
+            <input type="button" value="SUBMIT" ng-disabled="registration.team_a.$dirty && registration.team_a.$invalid || registration.team_b.$dirty && registration.team_b.$invalid" ng-click="addLineups()">
+        </form>
+        <h3 style="text-align: center;" ng-show="lineups">Add Lineups</h3>
+        <div name="ta_lineup" style="float: left;" ng-show="lineups">
+            <label for="paname">Player Name:</label>
+            <input type="text" id="paname" name="pname" ng-model="ta_newPlayer.pname" required>
+            <span style="color: red;" ng-show="ta_lineup.pname.$dirty && ta_lineup.pname.$invalid">
+                <span ng-show="ta_lineup.pname.$error.required">Player name required</span>
+            </span>
+            <input type="hidden" ng-model="ta_newPlayer.id">
+            <input type="button" value="Add" ng-disabled="ta_lineup.pname.$dirty && ta_lineup.pname.$invalid" ng-click="saveTa()">
+            <br><br>
+            <table border="1">
+                <tr>
+                    <th>{{team_a}}</th>
+                </tr>
+                <tr ng-repeat="ta_player in ta_players">
+                    <td>{{ta_player.pname}}</td>
+                </tr>
+            </table><br>
+        </div>
+        <div name="tb_lineup" style="float: right;" ng-show="lineups">
+            <label for="pbname">Player Name:</label>
+            <input type="text" id="pbname" name="pname" ng-model="tb_newPlayer.pname" required>
+            <span style="color: red;" ng-show="tb_lineup.pname.$dirty && tb_lineup.pname.$invalid">
+                <span ng-show="tb_lineup.pname.$error.required">Player name required</span>
+            </span>
+            <input type="hidden" ng-model="tb_newPlayer.id">
+            <input type="button" value="Add" ng-disabled="tb_lineup.pname.$dirty && tb_lineup.pname.$invalid" ng-click="saveTb()">
+            <br><br>
+            <table border="1">
+                <tr>
+                    <th>{{team_b}}</th>
+                </tr>
+                <tr ng-repeat="tb_player in tb_players">
+                    <td>{{tb_player.pname}}</td>
+                </tr>
+            </table><br>
+        </div><br>
+        <div style="clear: both;text-align: center;width: 100%;" ng-show="lineups">
+            <input type="button" value="SAVE" ng-click="toss()"><br>
+        </div><br>
+        <div>
+            <p ng-show="Toss">Toss: 
+                <input type="radio" ng-model="tosswin" value="team_a" ng-click="tossA()">{{team_a}}
+                <input type="radio" ng-model="tosswin" value="team_b" ng-click="tossB()">{{team_b}}
+                <br><br>
+                Elected to:
+                <input type="radio" ng-model="Elc_To" value="Bat">Bat
+                <input type="radio" ng-model="Elc_To" value="Field">Field
+                <br><br>
+                <input type="button" value="SAVE" ng-click="display()">
+            </p> 
+        </div>
+        <div ng-show="Isvisible" style="text-align: center;">
+            <h2>{{team_a}} VS {{team_b}}</h2>
+            <p>{{Toss_Won}} won the Toss and Elected to {{Elc_To}} first</p>
+        </div>
+        <a ng-show="Isvisible" style="float:right;" href="scoringsys.html">Start Match</a>
+    </body>
+</html>

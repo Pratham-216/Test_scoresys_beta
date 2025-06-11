@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <title>SCOREBOARD</title>
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+   <script src="Test.js"></script>
+</head>
+
+<body
+   style="background-color: #d7dce0df; font-size: xx-large;padding-left: 20px;padding-right: 20px;padding-top: 10px;padding-bottom: 10px;"
+   ng-app="scoreboard" ng-controller="sysCtrl">
+   <div style="border: 1px solid black;box-shadow: 0 -5px 20px rgba(0,0,0,0.7);padding-left: 25px;padding-right: 25PX;">
+      <p style="font-size: 50px;"><b>{{Team_a}} vs {{Team_b}}</b><span style="float: right;">DAY{{Crr_Day}}<span ng-show="Day_stumps">,<br>Stumps</span></span><br>
+         <span style="font-size: 40px;">{{Innings}} <span>{{ (i < 2) ? '1st' : (i> 1 && i < 4 ) ? '2nd' : '' }}</span>Innings</span>
+      </p>
+   </div>
+   <div
+      style="display: flex; justify-content: space-between; align-items: center;border: 1px solid black;box-shadow: 0 -10px 20px rgba(0,0,0,0.7);padding-left: 25px;padding-right: 25px;">
+      <div>
+         <p>TOTAL : {{runs}}<span>{{ (wkt==max_wkt) ? '' : '/'+wkt}}</span><br>
+            OVERS : {{Overs}}<br>
+            CRR : {{crr}}<br>
+            Extras : {{EXTRAS}}</p>
+      </div>
+      <div style="text-align: center;">
+         <p>Bat_name<br>
+            <br>
+            <span ng-if="i == 1">{{ (Ist_inn_score_diff > 0) ? 'Lead By '+Ist_inn_score_diff : (Ist_inn_score_diff < 0) ? 'Trail By '+(0-(Ist_inn_score_diff)) : 'Scores Level'}}</span>
+            <span ng-if="i == 2">{{ (IInd_inn_score_diff > 0) ? 'Lead By '+IInd_inn_score_diff : (IInd_inn_score_diff < 0) ? 'Trail By '+(0-(IInd_inn_score_diff)) : 'Scores Level'}}</span>
+            <span ng-if="i == 3">TARGET {{Target}}</span>
+         </p>
+      </div>
+      <div style="text-align: center;">
+         <p>Bowl_name<br>
+            This over<br>
+            <br>
+            4s :{{Fours}} 6s :{{Six}}
+         </p>
+      </div>
+   </div><br>
+   <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="text-align: center;">
+         RBW<br>
+         <input type="button" value="0" ng-click="dot()">
+         <input type="button" value="1" ng-click="single()">
+         <input type="button" value="2" ng-click="double()">
+         <input type="button" value="3" ng-click="triple()">
+         <input type="button" value="4" ng-click="four()">
+         <input type="button" value="5" ng-click="five()">
+         <input type="button" value="6" ng-click="six()">
+      </div>
+      <div style="text-align: center;">
+         Boundries<br>
+         <input type="button" value="4" ng-click="B_four()">
+         <input type="button" value="6" ng-click="B_six()">
+         <input type="button" value="Nb+4" ng-click="Nb4plus()">
+         <input type="button" value="Nb+6" ng-click="Nb6plus()">
+      </div>
+      <div style="text-align: center;">
+         Extras<br>
+         <input type="number" name="extra" ng-model="extra" min="0" max="10" placeholder="0">
+         <input type="button" value="wd" ng-click="wide()">
+         <input type="button" value="Nb" ng-click="no_ball()">
+         <input type="button" value="W" ng-click="wicket()">
+         <input type="button" value="P" ng-click="penalty()">
+      </div>
+   </div><br>
+   <div style="text-align:center ;">
+      <span ng-if="!Day_stumps && Crr_Day != max_days+1"><input type="button" value="Stumps" style="background-color: rgb(250, 93, 93);" ng-click="stumps()"></span>
+      <span ng-if="Day_stumps && Crr_Day < max_days"><input type="button" value="Start new day" ng-click="startNewDay()"></span>
+      <span ng-if="i == 1 && !(wkt === max_wkt || declared)"><input type="button" value="Follow On" ng-click="follow_on()"></span>
+      <input type="button" value="Declare" style="background-color: rgb(241, 241, 108);" ng-click="declaration()">
+      <input type="button" value="next_innings" ng-click="next_innings()" ng-disabled="!(wkt === max_wkt || declared) || i > 2">
+   </div><br>
+   <div style="display: flex; justify-content: center; align-items: center;gap: 35px;">
+      <div ng-show="i>=0">
+         <input type="button" style="width: 335px;" ng-value="buttonLabel1st()">
+         <table border="1" style="width: 335px; margin: 10px auto;">
+            <tr>
+            </tr>
+         </table>
+         <div style="width: 335px; margin: 10px auto;">
+            TOTAL<span style="float: right;">{{Ist_inn_score.Runs}}<span>{{(Ist_inn_score.WKT == max_wkt) ? '' : '/'+Ist_inn_score.WKT}}</span></span><br>
+            <hr>
+            OVERS<span style="float: right;">{{Ist_inn_score.Overs}}</span>
+         </div>
+      </div>
+      <div ng-show="i>=1">
+         <input type="button" style="width: 335px;" ng-value="buttonLabel2nd()">
+         <table border="1" style="width: 335px; margin: 10px auto;">
+            <tr>
+            </tr>
+         </table>
+         <div style="width: 335px; margin: 10px auto;">
+            TOTAL<span style="float: right;">{{IInd_inn_score.Runs}}<span>{{(IInd_inn_score.WKT == max_wkt) ? '' : '/'+IInd_inn_score.WKT}}</span></span><br>
+            <hr>
+            OVERS<span style="float: right;">{{IInd_inn_score.Overs}}</span>
+         </div>
+      </div>
+      <div ng-show="i>=2">
+         <input type="button" style="width: 335px;" ng-value="buttonLabel3rd()">
+         <table border="1" style="width: 335px; margin: 10px auto;">
+            <tr>
+            </tr>
+         </table>
+         <div style="width: 335px; margin: 10px auto;" ng-if="FollowOn==0">
+            TOTAL<span style="float: right;">{{IIIrd_inn_score.Runs}}<span>{{(IIIrd_inn_score.WKT == max_wkt) ? '' : '/'+IIIrd_inn_score.WKT}}</span></span><br>
+            <hr>
+            OVERS<span style="float: right;">{{IIIrd_inn_score.Overs}}</span>
+         </div>
+         <div style="width: 335px; margin: 10px auto;" ng-if="FollowOn==1">
+            TOTAL<span style="float: right;">{{IVth_inn_score.Runs}}<span>{{(IVth_inn_score.WKT == max_wkt) ? '' : '/'+IVth_inn_score.WKT}}</span></span><br>
+            <hr>
+            OVERS<span style="float: right;">{{IVth_inn_score.Overs}}</span>
+         </div>
+      </div>
+      <div ng-show="i==3">
+         <input type="button" style="width: 335px;" ng-value="buttonLabel4th()">
+         <table border="1" style="width: 335px; margin: 10px auto;">
+            <tr>
+            </tr>
+         </table>
+         <div style="width: 335px; margin: 10px auto;" ng-if="FollowOn==0">
+            TOTAL<span style="float: right;">{{IVth_inn_score.Runs}}<span>{{(IVth_inn_score.WKT == max_wkt) ? '' : '/'+IVth_inn_score.WKT}}</span></span><br>
+            <hr>
+            OVERS<span style="float: right;">{{IVth_inn_score.Overs}}</span>
+         </div>
+         <div style="width: 335px; margin: 10px auto;" ng-if="FollowOn==1">
+            TOTAL<span style="float: right;">{{IIIrd_inn_score.Runs}}<span>{{(IIIrd_inn_score.WKT == max_wkt) ? '' : '/'+IIIrd_inn_score.WKT}}</span></span><br>
+            <hr>
+            OVERS<span style="float: right;">{{IIIrd_inn_score.Overs}}</span>
+         </div>
+      </div>
+   </div>
+   {{result}}
+</body>
+</html>
